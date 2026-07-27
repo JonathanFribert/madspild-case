@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jonathan Fribert | Case: The Food-Waste App</title>
+<meta name="description" content="Project case about an app that finds discounted groceries near the user and suggests recipes based on deals and pantry contents. Built as a side project by Jonathan Fribert and documented with real numbers from production.">
+<meta name="theme-color" content="#F7F4ED" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#141A15" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Jonathan Fribert | Case: The Food-Waste App">
+<meta property="og:description" content="An app that finds discounted groceries near the user and suggests recipes based on deals and pantry contents, built as a side project over a month and a half.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jonathanfribert.github.io/madspild-case/en.html">
+<meta property="og:locale" content="en_GB">
+<meta property="og:locale:alternate" content="da_DK">
+<meta name="twitter:card" content="summary">
+<link rel="canonical" href="https://jonathanfribert.github.io/madspild-case/en.html">
+<link rel="alternate" hreflang="da" href="https://jonathanfribert.github.io/madspild-case/">
+<link rel="alternate" hreflang="en" href="https://jonathanfribert.github.io/madspild-case/en.html">
+<link rel="alternate" hreflang="x-default" href="https://jonathanfribert.github.io/madspild-case/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><rect width=%2264%22 height=%2264%22 rx=%2214%22 fill=%22%2315402D%22/><text x=%2232%22 y=%2243%22 text-anchor=%22middle%22 font-family=%22Menlo,monospace%22 font-size=%2228%22 font-weight=%22700%22 fill=%22white%22>JF</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,700;1,6..72,500&amp;family=IBM+Plex+Mono:wght@500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #F7F4ED; --surface: #FFFFFF; --surface-soft: #EFEAE0;
+    --line: #E1DACB; --ink: #18221D; --muted: #605C50;
+    --accent: #15402D; --accent-strong: #0F2E20; --accent-soft: #E7F0EA;
+    --red: #A6301F; --red-soft: #F5E8E3; --amber: #9A6708;
+    --green: #1F9D57; --green-soft: #E7F2EA;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif: "Newsreader", "Iowan Old Style", Georgia, serif;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+
+    --dark-ground: #141A15; --dark-surface: #1B231C; --dark-surface-soft: #212B22;
+    --dark-line: #34402F; --dark-ink: #E7EFE7; --dark-muted: #9CA898;
+    --dark-accent: #8FCE9F; --dark-accent-strong: #B4E0BF; --dark-accent-soft: #1D2B20;
+    --dark-red: #E08B7A; --dark-red-soft: #35211C; --dark-amber: #D9AC5E;
+    --dark-green: #8FCE9F; --dark-green-soft: #1D2B20;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: var(--dark-ground); --surface: var(--dark-surface); --surface-soft: var(--dark-surface-soft);
+      --line: var(--dark-line); --ink: var(--dark-ink); --muted: var(--dark-muted);
+      --accent: var(--dark-accent); --accent-strong: var(--dark-accent-strong); --accent-soft: var(--dark-accent-soft);
+      --red: var(--dark-red); --red-soft: var(--dark-red-soft); --amber: var(--dark-amber);
+      --green: var(--dark-green); --green-soft: var(--dark-green-soft);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: var(--dark-ground); --surface: var(--dark-surface); --surface-soft: var(--dark-surface-soft);
+    --line: var(--dark-line); --ink: var(--dark-ink); --muted: var(--dark-muted);
+    --accent: var(--dark-accent); --accent-strong: var(--dark-accent-strong); --accent-soft: var(--dark-accent-soft);
+    --red: var(--dark-red); --red-soft: var(--dark-red-soft); --amber: var(--dark-amber);
+    --green: var(--dark-green); --green-soft: var(--dark-green-soft);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 1.0625rem; line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  ::selection { background: var(--accent-soft); }
+  img { max-width: 100%; display: block; }
+  .shell { width: min(62rem, calc(100% - 3rem)); margin-inline: auto; }
+  .skip-link {
+    position: absolute; top: -3rem; left: 1rem; z-index: 100; padding: 0.7rem 1.1rem;
+    background: var(--ink); color: var(--ground); border-radius: 4px; font-weight: 700;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus { top: 1rem; }
+
+  header.masthead-bar {
+    position: sticky; top: 0; z-index: 40; background: color-mix(in srgb, var(--ground) 92%, transparent);
+    backdrop-filter: blur(8px); border-bottom: 1px solid var(--line);
+  }
+  .masthead-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 0.9rem 0; }
+  .masthead-link { text-decoration: none; font-family: var(--mono); font-weight: 700; font-size: 0.9rem; letter-spacing: 0.02em; }
+  .masthead-link:hover { color: var(--accent); }
+  .head-actions { display: flex; align-items: center; gap: 0.6rem; }
+  .language-switch {
+    display: inline-flex; align-items: center; min-height: 2.5rem; padding: 0 0.2rem;
+    color: var(--muted); font-family: var(--mono); font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.06em; text-decoration: none;
+  }
+  .language-switch:hover { color: var(--accent); }
+  .theme-toggle {
+    display: inline-flex; width: 2.5rem; height: 2.5rem; align-items: center; justify-content: center;
+    border: 1px solid var(--line); border-radius: 4px; background: var(--surface); color: var(--muted); cursor: pointer;
+  }
+  .theme-toggle:hover { border-color: var(--accent); color: var(--accent); }
+  .theme-toggle .icon-sun { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+  :root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .theme-toggle .icon-moon { display: none; }
+    :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: block; }
+  }
+  html:not(.js) .theme-toggle { display: none; }
+
+  .hero { padding: clamp(2.4rem, 6vw, 4.2rem) 0 clamp(2rem, 5vw, 3rem); }
+  .eyebrow { margin: 0 0 0.7rem; color: var(--accent); font-family: var(--mono); font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+  h1 { margin: 0 0 1rem; font-family: var(--serif); font-weight: 700; font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.08; text-wrap: balance; }
+  .lead { margin: 0; max-width: 42rem; color: var(--muted); font-size: clamp(1.08rem, 1.6vw, 1.25rem); line-height: 1.65; text-wrap: pretty; }
+
+  .case-brief {
+    margin-top: 2.2rem; display: grid; grid-template-columns: 1fr; gap: 1rem;
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 1.3rem 0;
+  }
+  .case-brief dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: 1rem 1.5rem; }
+  .case-brief dt { margin: 0 0 0.2rem; color: var(--muted); font-family: var(--mono); font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+  .case-brief dd { margin: 0; font-weight: 600; }
+  .status-stamp {
+    display: inline-block; margin-left: 0.6rem; border: 2px solid var(--green); border-radius: 4px;
+    padding: 0.05rem 0.45rem; color: var(--green); font-family: var(--mono); font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.06em; transform: rotate(-2deg); vertical-align: middle;
+  }
+  .case-disclaimer { margin: 0.6rem 0 0; color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0; margin-top: 1.6rem; }
+  .stat { padding: 0.9rem 1.2rem 0.9rem 0; }
+  .stat + .stat { border-left: 1px solid var(--line); padding-left: 1.2rem; }
+  .stat-value { color: var(--accent); font-family: var(--mono); font-size: clamp(1.35rem, 2.1vw, 1.8rem); font-weight: 700; }
+  .stat-label { margin-top: 0.3rem; color: var(--muted); font-size: 0.86rem; line-height: 1.45; }
+
+  section.section { padding: clamp(3rem, 6vw, 4.6rem) 0; border-top: 1px solid var(--line); }
+  section.section.soft { background: color-mix(in srgb, var(--surface-soft) 55%, transparent); }
+  .section-label { margin: 0 0 0.7rem; color: var(--accent); font-family: var(--mono); font-size: 0.76rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+  h2 { margin: 0 0 1rem; font-family: var(--serif); font-weight: 700; font-size: clamp(1.5rem, 3vw, 2.05rem); line-height: 1.18; text-wrap: balance; }
+  .intro { max-width: 44rem; margin: 0 0 1.6rem; color: var(--muted); font-size: 1.08rem; line-height: 1.65; text-wrap: pretty; }
+  .prose p { max-width: 42rem; margin: 0 0 1rem; line-height: 1.7; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 2rem 0 0; }
+  .flow-box {
+    flex: 1 1 9rem; min-width: 9rem; border: 1px solid var(--line); border-radius: 10px;
+    background: var(--surface); padding: 0.9rem 1rem; display: flex; flex-direction: column; justify-content: center;
+  }
+  .flow-box b { display: block; font-family: var(--mono); font-size: 0.86rem; }
+  .flow-box span { display: block; margin-top: 0.25rem; color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
+  .flow-box.accent { border-color: var(--accent); background: var(--accent-soft); }
+  .flow-arrow { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 2rem; color: var(--accent); font-weight: 700; }
+  @media (max-width: 640px) {
+    .flow { flex-direction: column; }
+    .flow-arrow { width: auto; height: 1.6rem; transform: rotate(90deg); }
+  }
+  .flow-note { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
+
+  .tech-table { width: 100%; margin-top: 1.6rem; border-collapse: collapse; font-size: 0.96rem; }
+  .tech-table th { text-align: left; padding: 0.55rem 1rem 0.55rem 0; color: var(--muted); font-family: var(--mono); font-size: 0.74rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .tech-table td { padding: 0.7rem 1rem 0.7rem 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  .tech-table td:first-child { font-weight: 700; white-space: nowrap; }
+  .tech-table tr:last-child td { border-bottom: 0; }
+
+  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); gap: 1.4rem; margin-top: 1.8rem; align-items: start; }
+  .shot { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
+  .shot img { width: 100%; height: auto; }
+  .shot figcaption { padding: 0.7rem 0.9rem; color: var(--muted); font-size: 0.85rem; line-height: 1.5; border-top: 1px solid var(--line); }
+  .shot.mobile { max-width: 15rem; }
+
+  .timeline { margin-top: 1.8rem; display: grid; gap: 0; position: relative; }
+  .timeline::before { content: ""; position: absolute; top: 0.5rem; bottom: 0.5rem; left: 5.2rem; width: 1px; background: var(--line); }
+  .timeline-item { display: grid; grid-template-columns: 4.6rem 1.6rem 1fr; gap: 0.8rem; padding: 0.75rem 0; align-items: start; }
+  .timeline-date { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); padding-top: 0.15rem; }
+  .timeline-dot { position: relative; width: 1.6rem; display: flex; justify-content: center; }
+  .timeline-dot::after { content: ""; width: 0.6rem; height: 0.6rem; border-radius: 50%; background: var(--accent); margin-top: 0.35rem; }
+  .timeline-copy { font-size: 0.98rem; line-height: 1.55; }
+  .timeline-copy strong { display: block; font-family: var(--serif); font-size: 1.08rem; margin-bottom: 0.1rem; }
+
+  .limits-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.4rem; margin-top: 1.6rem; }
+  .limit-card { border-top: 2px solid var(--line); padding: 1rem 0 0; }
+  .limit-card h3 { margin: 0 0 0.4rem; font-family: var(--serif); font-size: 1.15rem; }
+  .limit-card p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.55; }
+
+  .cta-card { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.6rem; }
+  .cta-card h2 { max-width: 20rem; }
+  .cta-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+  .button {
+    display: inline-flex; align-items: center; gap: 0.4rem; border-radius: 999px; padding: 0.7rem 1.3rem;
+    font-weight: 700; font-size: 0.96rem; text-decoration: none; border: 1px solid var(--accent);
+    background: var(--accent); color: var(--ground);
+  }
+  .button:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+  .button.secondary { background: transparent; color: var(--ink); border-color: var(--line); }
+  .button.secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  footer { padding: 2rem 0 3rem; border-top: 1px solid var(--line); }
+  .foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; color: var(--muted); font-size: 0.88rem; }
+  .foot-row a { text-decoration: underline; text-underline-offset: 2px; }
+
+  @media (max-width: 640px) {
+    .case-brief dl { grid-template-columns: 1fr 1fr; }
+    .stat + .stat { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 0.9rem; margin-top: 0.9rem; }
+    .stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="masthead-bar">
+  <div class="shell masthead-row">
+    <a class="masthead-link" href="https://jonathanfribert.github.io/en.html">← Jonathan Fribert</a>
+    <div class="head-actions">
+      <a class="language-switch" href="index.html" lang="da" hreflang="da" aria-label="Læs denne side på dansk">DA</a>
+      <button class="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+        <svg class="icon-moon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/></svg>
+        <svg class="icon-sun" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="content">
+  <div class="shell hero">
+    <p class="eyebrow">Case 02 · Side project</p>
+    <h1>I built an app that finds discounted groceries and works out what you can cook with them</h1>
+    <p class="lead">A Next.js app for food waste: it fetches discounted items near the user, matches them against a pantry, and suggests concrete recipes given budget, servings and cooking time.</p>
+
+    <div class="case-brief">
+      <dl>
+        <div><dt>Role</dt><dd>Solo developer</dd></div>
+        <div><dt>Period</dt><dd>6 June – 20 July 2026, in breaks from other work</dd></div>
+        <div><dt>Status</dt><dd>In production <b class="status-stamp" aria-hidden="true">LIVE</b></dd></div>
+        <div><dt>Live</dt><dd><a href="https://madspild-app.vercel.app" target="_blank" rel="noopener">madspild-app.vercel.app ↗</a></dd></div>
+      </dl>
+      <p class="case-disclaimer">Personal side project, not affiliated with Salling Group, Netto or any other chain mentioned. Uses only publicly available APIs (Salling Food Waste API, DAWA). Prices and stock counts come straight from the source and may have changed since your visit.</p>
+    </div>
+
+    <div class="stats" aria-label="Key figures for the project">
+      <div class="stat"><div class="stat-value">6</div><div class="stat-label">postal codes with daily data collection</div></div>
+      <div class="stat"><div class="stat-value">~1,000</div><div class="stat-label">active deals across 30+ stores</div></div>
+      <div class="stat"><div class="stat-value">4,637</div><div class="stat-label">lines of code, 25 files</div></div>
+      <div class="stat"><div class="stat-value">5</div><div class="stat-label">development days, spread over six weeks</div></div>
+    </div>
+  </div>
+
+  <section class="section" id="brief">
+    <div class="shell">
+      <p class="section-label">01 · The brief</p>
+      <h2>Deals, pantry and recipes in one flow</h2>
+      <div class="intro">
+        <p>Supermarkets discount items daily before they'd otherwise be thrown out. The hard part isn't finding a single deal, it's getting all the way from "here are some cheap groceries" to "here's a meal I can actually cook tonight" without manually tracking prices, distance, and what's already in the fridge.</p>
+        <p>The app ties the three steps together: find deals near you based on how you get around (walking, cycling, driving), match them automatically against your pantry, and get concrete recipes with the savings worked out, the missing ingredients listed, and a shopping list ready to hand off to Nemlig or Wolt.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft" id="solution">
+    <div class="shell">
+      <p class="section-label">02 · How it fits together</p>
+      <h2>From Salling deals to recipe suggestions</h2>
+      <p class="intro">The data flow splits in two: a daily background job that collects deals into a cache, and the actual search, which combines the cache with the user's pantry and an AI model.</p>
+
+      <div class="flow" role="img" aria-label="Diagram: the Salling Food Waste API and DAWA feed a daily cron job, which writes to a Supabase cache. The user's search looks up the cache and matches it against the pantry, which together with Claude Haiku generates recipe suggestions with a shopping list.">
+        <div class="flow-box"><b>Salling API</b><span>discounted items per store</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-box"><b>Daily cron job</b><span>Vercel, 7am</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-box accent"><b>Supabase cache</b><span>6 postal codes</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-box"><b>Search</b><span>address (DAWA) + mode of transport</span></div>
+        <div class="flow-arrow" aria-hidden="true">→</div>
+        <div class="flow-box accent"><b>Claude Haiku</b><span>match against pantry → recipes</span></div>
+      </div>
+      <p class="flow-note">Claude Haiku is the primary recipe engine and receives current deals plus the pantry as context; it prioritises items expiring soon. If it doesn't respond, the app silently falls back to Spoonacular, then TheMealDB, and finally a local, hand-written recipe dataset, so the "Cook" tab is never empty.</p>
+    </div>
+  </section>
+
+  <section class="section" id="tech">
+    <div class="shell">
+      <p class="section-label">03 · The stack</p>
+      <h2>Tech and operations</h2>
+      <table class="tech-table">
+        <tr><th>Part</th><th>Tool</th></tr>
+        <tr><td>Frontend</td><td>Next.js 15 (App Router), React 19, TypeScript, Tailwind CSS</td></tr>
+        <tr><td>Data</td><td>Supabase (Postgres) as a cache layer for the Salling Food Waste API</td></tr>
+        <tr><td>Addresses</td><td>DAWA (Danish Address Web API) for autocomplete and geocoding</td></tr>
+        <tr><td>Recipes</td><td>Claude Haiku (claude-haiku-4-5) primary, with Spoonacular, TheMealDB and a local dataset as a descending fallback chain</td></tr>
+        <tr><td>Hosting</td><td>Vercel, manual deploy, daily cron for cache refresh (Hobby plan limit)</td></tr>
+        <tr><td>Storage</td><td>Profile, pantry and stats live in the browser's localStorage — no server-side accounts yet</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <section class="section soft" id="screens">
+    <div class="shell">
+      <p class="section-label">04 · What it looks like</p>
+      <h2>Screenshots from the running app</h2>
+      <p class="intro">Taken directly from the production site; the numbers are whatever the Salling API actually returned at that moment.</p>
+      <div class="shots">
+        <figure class="shot">
+          <img src="skaerm-find.png" alt="Screenshot of 'Find deals' showing 998 active offers, category filtering and per-store grouping." loading="lazy" width="1440" height="900">
+          <figcaption>Find deals: 998 active offers from Netto Nørrebrogade and nearby stores within walking distance, grouped per store.</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="skaerm-lavmad.png" alt="Screenshot of 'Cook' with four Danish recipe suggestions, including a bacon-sausage toast with matcha and oat milk." loading="lazy" width="1440" height="900">
+          <figcaption>Cook: Claude Haiku suggests everyday Danish dishes based on current deals, with the savings worked out per recipe.</figcaption>
+        </figure>
+        <figure class="shot mobile">
+          <img src="skaerm-mobil.png" alt="Screenshot of the app on mobile with a fixed bottom navigation bar." loading="lazy" width="390" height="844">
+          <figcaption>Mobile view with the fixed bottom navigation added in the July design pass.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="build">
+    <div class="shell">
+      <p class="section-label">05 · Built in phases, not in a week</p>
+      <h2>Five working days spread over six weeks</h2>
+      <p class="intro">Unlike an intensive sprint, this app is a side project: built in discrete sessions alongside other work, with the git history as the only reliable timeline.</p>
+      <div class="timeline">
+        <div class="timeline-item"><div class="timeline-date">6–7 Jun</div><div class="timeline-dot"></div><div class="timeline-copy"><strong>First prototype</strong>Salling Food Waste API wired up, basic search and results display.</div></div>
+        <div class="timeline-item"><div class="timeline-date">14 Jun</div><div class="timeline-dot"></div><div class="timeline-copy"><strong>Recipes and shopping list</strong>Claude-driven recipe suggestions, pantry, store grouping and "My impact" stats.</div></div>
+        <div class="timeline-item"><div class="timeline-date">15 Jul</div><div class="timeline-dot"></div><div class="timeline-copy"><strong>Design pass</strong>Persisted search, fixed mobile navigation, expired deals hidden by default, Danish-language recipe titles put into production, coverage expanded to six postal codes.</div></div>
+        <div class="timeline-item"><div class="timeline-date">20 Jul</div><div class="timeline-dot"></div><div class="timeline-copy"><strong>Last fix</strong>Onboarding now reopens itself for users who never picked an address — the last known dead end closed.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section soft" id="limits">
+    <div class="shell">
+      <p class="section-label">06 · Limits and deliberate omissions</p>
+      <h2>What the app deliberately isn't</h2>
+      <div class="limits-grid">
+        <div class="limit-card">
+          <h3>No automated tests</h3>
+          <p>Unlike other projects, no test suite has been built yet. Each change is instead verified manually against a production build and with screenshots of the running app.</p>
+        </div>
+        <div class="limit-card">
+          <h3>Copenhagen only</h3>
+          <p>Data collection covers six postal codes around Copenhagen. Adding more is a configuration change, not a code change, but it hasn't been done yet.</p>
+        </div>
+        <div class="limit-card">
+          <h3>No real user accounts</h3>
+          <p>Profile, pantry and stats live in the browser's localStorage. That's enough for personal use, but data doesn't follow you across devices.</p>
+        </div>
+        <div class="limit-card">
+          <h3>No operational numbers yet</h3>
+          <p>Unlike the news monitor, the app has no dedicated user generating daily logs. The figures here are snapshots from the live cache, not a week-long audit.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-card" id="contact">
+    <div class="shell cta-card">
+      <div>
+        <p class="section-label">07 · Contact</p>
+        <h2>Questions about the app?</h2>
+      </div>
+      <div class="cta-actions">
+        <a class="button" href="mailto:fribert6@gmail.com">Get in touch</a>
+        <a class="button secondary" href="https://jonathanfribert.github.io/en.html">See other projects</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="shell foot-row">
+    <span>Jonathan Fribert · <a href="mailto:fribert6@gmail.com">fribert6@gmail.com</a> · <a href="https://github.com/JonathanFribert">github.com/JonathanFribert</a></span>
+    <span>Set in Newsreader and IBM Plex Mono</span>
+  </div>
+</footer>
+
+<script>
+  document.documentElement.classList.remove('no-js');
+  document.documentElement.classList.add('js');
+  (function () {
+    var themeToggle = document.querySelector('.theme-toggle');
+    if (!themeToggle) return;
+    var systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+    var syncAria = function () {
+      var forced = document.documentElement.getAttribute('data-theme');
+      var isDark = forced ? forced === 'dark' : systemDark.matches;
+      themeToggle.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+      themeToggle.setAttribute('aria-label', isDark ? 'Switch to light theme' : 'Switch to dark theme');
+    };
+    themeToggle.addEventListener('click', function () {
+      var root = document.documentElement;
+      var current = root.getAttribute('data-theme') || (systemDark.matches ? 'dark' : 'light');
+      var next = current === 'dark' ? 'light' : 'dark';
+      if ((next === 'dark') === systemDark.matches) {
+        root.removeAttribute('data-theme');
+        try { localStorage.removeItem('madspild-case-theme'); } catch (e) {}
+      } else {
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('madspild-case-theme', next); } catch (e) {}
+      }
+      syncAria();
+    });
+    try {
+      var saved = localStorage.getItem('madspild-case-theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+    } catch (e) {}
+    syncAria();
+  })();
+</script>
+</body>
+</html>
